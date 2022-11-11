@@ -62,9 +62,12 @@ def finn_personer(df):
     df2 = pd.concat(dfs).drop_duplicates()
     return df2
 
+
 # %%
 df2 = finn_personer(df)
 len(df2)  # antall rader som inneholder navn, tlf eller epost med hilsen
 # %%
-(len(df2) / len(df))*100 # andel svar i undersøkelsen som inneholder personopplysninger
+(
+    len(df2) / len(df)
+) * 100  # andel svar i undersøkelsen som inneholder personopplysninger
 # %%
