@@ -33,7 +33,7 @@ def hent_fornavn():
 df = hent_fornavn()
 
 
-with open("data/final/fornavn.json", "w", encoding="utf-8") as f:
+with open("/tmp/data/fornavn.json", "w", encoding="utf-8") as f:
     json.dump(df.json(), f, ensure_ascii=False)
 
 # %%
@@ -65,6 +65,6 @@ def hent_etternavn():
 
 df = hent_etternavn()
 
-with open("data/final/etternavn.json", "w", encoding="utf-8") as f:
+with open("/tmp/data/etternavn.json", "w", encoding="utf-8") as f:
     json.dump(df.json(), f, ensure_ascii=False)
 # %%
