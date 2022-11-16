@@ -1,7 +1,7 @@
 # %%
-import os
-import re
+import json
 
+from pyjstat import pyjstat
 import pandas as pd
 
 # %%
@@ -42,7 +42,62 @@ def find_substring_regex(regex: str, df, case=False):
 
 
 # %%
+def pyjstat_to_df(filsti):
+    """
+    Last inn json-stat data fra JSON-fil og konvertér til dataframe
+    """
+    with open(filsti, "r") as f:
+        j = json.load(f)
+        s = json.dumps(j)
+        dataset = pyjstat.Dataset.read(s)
+        df = dataset.write("dataframe")
+    return df
+
+
+# %%
+fornavn = pyjstat_to_df("data/final/fornavn.json")
+
+# %%
+fornavn_liste = list(set(fornavn["fornavn"]))
+fornavn_liste_små = [x.lower() for x in fornavn_liste]
+fornavn_pattern = "|".join([f"(?i){navn}" for navn in fornavn_liste])
+# %%
+etternavn = pyjstat_to_df("data/final/etternavn.json")
+
+# %%
+etternavn = etternavn[
+    ~etternavn["etternavn"].isin(["A-F", "G-K", "L-R", "S-Å"])
+]  # drop alfabetrekken
+etternavn_liste = list(set(etternavn["etternavn"]))
+etternavn_liste_små = [x.lower() for x in etternavn_liste]
+etternavn_pattern = "|".join([f"(?i){navn}" for navn in etternavn_liste])
+# %%
+
 df = pd.read_excel("data/final/merged.xlsx")
+# %%
+kun_fritekst = [
+    "Hva kom du til nettstedet for? other",
+    "Hvorfor ikke? other",
+    "Hva er situasjonen din? other",
+    "Hva ville du søke om? other",
+    "Hvem er du? other",
+    "Hva vil du gjøre i stedet? other",
+    "Fortell oss om hva som er vanskelig",
+    "Hva ville du finne statistikk, analyse eller forskning om?",
+    "Hva prøvde du å finne informasjon om?",
+    "Noe mer du vil si om nettsidene våre?",
+]
+# %%
+def kun_fritekstsvar(df, kolonner):
+    """
+    Lag en dataframe med kun rader som inneholder fritekstsvar
+    """
+    dikt = dict(zip(kolonner, [df[~df[x].isna()] for x in kolonner]))
+    fritekstsvar = pd.concat(dikt.values(), ignore_index=True).drop_duplicates()
+    return fritekstsvar
+
+
+fritekstsvar = kun_fritekstsvar(df, kolonner=kun_fritekst)
 # %%
 def finn_personer(df):
     """
