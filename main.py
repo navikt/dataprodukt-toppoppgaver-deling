@@ -98,6 +98,7 @@ def kun_fritekstsvar(df, kolonner):
 
 
 fritekstsvar = kun_fritekstsvar(df, kolonner=kun_fritekst)
+len(fritekstsvar) / len(df)  # andel svar med fritekst
 # %%
 def finn_personer(df):
     """
@@ -119,7 +120,7 @@ def finn_personer(df):
 
 
 # %%
-df2 = finn_personer(df)
+df2 = finn_personer(fritekstsvar)
 len(df2)  # antall rader som inneholder navn, tlf eller epost med hilsen
 # %%
 (
