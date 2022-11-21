@@ -30,9 +30,33 @@ def kun_fritekstsvar(df, kolonner):
     fritekstsvar = pd.concat(dikt.values(), ignore_index=True).drop_duplicates()
     return fritekstsvar
 
+
 fritekstsvar = kun_fritekstsvar(df, kolonner=kun_fritekst)
 
+
 # %%
-df_vask_toppoppgavene = ner_vask_opplysninger.sladd_tekster(df = fritekstsvar, text_col_input= 'Noe mer du vil si om nettsidene våre?', text_col_output= 'om_nettsidene_vasket')
+df_vask_toppoppgavene = ner_vask_opplysninger.sladd_tekster(
+    df=fritekstsvar,
+    ents_list=["PER", "FNR", "TLF", "EPOST"],
+    ekstra_vask_av_navn=True,
+    text_col_input="Noe mer du vil si om nettsidene våre?",
+    text_col_output="om_nettsidene_vasket",
+)
 df_vask_toppoppgavene
+# %%
+# prøv uten ML kun regex og sladding
+df_regex_toppoppgavene = ner_vask_opplysninger.flashtext_sladd(
+    df=fritekstsvar,
+    text_col_input="Noe mer du vil si om nettsidene våre?",
+    text_col_output="om_nettsidene_vasket",
+)
+df_regex_toppoppgavene
+# %%
+# vis treff fra NER og sladding
+df_vask_treff = ner_vask_opplysninger.flashtext_extract(
+    df=fritekstsvar,
+    text_col_input="Noe mer du vil si om nettsidene våre?",
+    col_output="noe_mer_treff",
+)
+df_vask_treff
 # %%

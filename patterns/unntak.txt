@@ -1,0 +1,4 @@
+dag
+bo
+sommer
+fred

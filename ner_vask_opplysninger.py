@@ -14,6 +14,7 @@ logging.basicConfig(level=logging.INFO)
 
 # %%
 from pathlib import Path
+
 patterns_folder = Path("./patterns/")
 
 regex_patterns_file = patterns_folder / "regex_patterns.txt"
@@ -48,6 +49,7 @@ def pyjstat_to_df(filsti):
         df = dataset.write("dataframe")
     return df
 
+
 # %%
 fornavn = pyjstat_to_df("data/final/fornavn.json")
 fornavn_unik = [_ for _ in fornavn["fornavn"].unique()]
@@ -60,6 +62,11 @@ etternavn = etternavn[
 etternavn_unik = [_ for _ in etternavn["etternavn"].unique()]
 etternavn_små = [item.lower() for item in etternavn_unik]
 navn = fornavn_små + etternavn_små
+# %%
+# ignorer navn som forveksles med substantiv og verb
+with open("./patterns/unntak.txt") as f:
+    unntak = [line.rstrip() for line in f]
+navn = [n for n in navn if n not in unntak]
 # %%
 def flashtext_sladd(df, text_col_input, text_col_output=None):
     """Sladding av navn fra SSB-navnelister vha. flashtext
@@ -96,12 +103,12 @@ def flashtext_sladd(df, text_col_input, text_col_output=None):
 
     # gjør en replace av alle søketermene med den grupperte versjonen av termen
     if text_col_output:
-        df_out[text_col_output] = df_out[text_col_input].apply(
-            processor.replace_keywords
+        df_out[text_col_output] = (
+            df_out[text_col_input].astype(str).apply(processor.replace_keywords)
         )
     else:
-        df_out[text_col_input] = df_out[text_col_input].apply(
-            processor.replace_keywords
+        df_out[text_col_input] = (
+            df_out[text_col_input].astype(str).apply(processor.replace_keywords)
         )
 
     return df_out
@@ -252,11 +259,13 @@ def sladd_tekster(
     if print_progress == True:
         logging.info(f"**Tokenisering og vasking for {len(df_out)} tekster**")
         logging.info("Starter vasking av følgende entiteter")
-        logging.info([
+        logging.info(
+            [
                 ent
                 for ent in ents_list
                 if ent in ["PER", "FNR", "TLF", "LOC", "ORG", "EPOST"]
-            ])
+            ]
+        )
 
     # re-indekserer dataframen for å være sikker på at hver indeksverdi er unik
     df_out = df_out.reset_index(drop=True)
@@ -301,3 +310,43 @@ def sladd_tekster(
 
 
 # %%
+def flashtext_extract(df, text_col_input, col_output=None):
+    """Uttrekk av treff på navn fra SSB-navnelister vha. flashtext
+
+    parameters:
+    -----------
+    df: pd.dataframe
+        pandas dataframen som skal behandles
+    text_col_input: str
+        Navnet på kolonnen i dataframen med teksten som skal behandles
+    col_output: str
+        Eventuelt navn på kolonne for vasket tekst.
+        Dersom dette ikke angis legges output i text_col_input-kolonnen.
+
+    """
+    term_liste = navn
+
+    # definerer en tom keywordprocessor
+    processor = KeywordProcessor(case_sensitive=False)
+    # flashtext sin keywordprocessor splitter ord på 'spesielle tegn' - ønsker her å behandle ord med følgende tegn som enkeltord
+    processor.non_word_boundaries.add("-")
+    processor.non_word_boundaries.add("æ")
+    processor.non_word_boundaries.add("ø")
+    processor.non_word_boundaries.add("å")
+
+    processor.add_keywords_from_list(navn)
+
+    # lager en kopi for å ikke endre på input-dataframen
+    df_out = df.copy()
+
+    # gjør en replace av alle søketermene med den grupperte versjonen av termen
+    if col_output:
+        df_out[col_output] = df_out[text_col_input].astype(str).apply(
+            lambda x: list(set(processor.extract_keywords(x)))
+        )
+    else:
+        df_out[text_col_input] = df_out[text_col_input].astype(str).apply(
+            lambda x: list(set(processor.extract_keywords(x)))
+        )
+
+    return df_out
