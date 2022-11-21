@@ -37,7 +37,7 @@ fritekstsvar = kun_fritekstsvar(df, kolonner=kun_fritekst)
 # %%
 df_vask_toppoppgavene = ner_vask_opplysninger.sladd_tekster(
     df=fritekstsvar,
-    ents_list=["PER", "FNR", "TLF", "EPOST"],
+    ents_list=["PER", "FNR", "TLF", "EPOST", "finne", "andre"],
     ekstra_vask_av_navn=True,
     text_col_input="Noe mer du vil si om nettsidene våre?",
     text_col_output="om_nettsidene_vasket",
@@ -59,4 +59,15 @@ df_vask_treff = ner_vask_opplysninger.flashtext_extract(
     col_output="noe_mer_treff",
 )
 df_vask_treff
+# %%
+df_kunspacy = ner_vask_opplysninger.spacy_vask(
+    df=fritekstsvar,
+    text_col_input="Noe mer du vil si om nettsidene våre?",
+    text_col_output="om_nettsidene_vasket",
+    ents_list=["PER", "FNR", "TLF", "EPOST", "finne"],
+    n_process=1,
+    print_progress=True
+)
+
+df_kunspacy
 # %%

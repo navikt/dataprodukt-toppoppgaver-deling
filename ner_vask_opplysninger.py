@@ -28,6 +28,8 @@ custom_patterns = [
     {"label": "FNR", "pattern": "[FNR]"},
     {"label": "TLF", "pattern": "[TLF]"},
     {"label": "EPOST", "pattern": "[EPOST]"},
+    {"label": "finne", "pattern": [{"lower": "finne"}]},
+    {"label": "andre", "pattern": [{"lower": "andre"}]}
 ]
 ruler_config = {
     "phrase_matcher_attr": None,
@@ -341,12 +343,16 @@ def flashtext_extract(df, text_col_input, col_output=None):
 
     # gjør en replace av alle søketermene med den grupperte versjonen av termen
     if col_output:
-        df_out[col_output] = df_out[text_col_input].astype(str).apply(
-            lambda x: list(set(processor.extract_keywords(x)))
+        df_out[col_output] = (
+            df_out[text_col_input]
+            .astype(str)
+            .apply(lambda x: list(set(processor.extract_keywords(x))))
         )
     else:
-        df_out[text_col_input] = df_out[text_col_input].astype(str).apply(
-            lambda x: list(set(processor.extract_keywords(x)))
+        df_out[text_col_input] = (
+            df_out[text_col_input]
+            .astype(str)
+            .apply(lambda x: list(set(processor.extract_keywords(x))))
         )
 
     return df_out

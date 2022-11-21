@@ -2,3 +2,5 @@ dag
 bo
 sommer
 fred
+finne
+andre
