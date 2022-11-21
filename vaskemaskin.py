@@ -32,8 +32,6 @@ def kun_fritekstsvar(df, kolonner):
 
 
 fritekstsvar = kun_fritekstsvar(df, kolonner=kun_fritekst)
-
-
 # %%
 df_vask_toppoppgavene = ner_vask_opplysninger.sladd_tekster(
     df=fritekstsvar,
@@ -66,8 +64,21 @@ df_kunspacy = ner_vask_opplysninger.spacy_vask(
     text_col_output="om_nettsidene_vasket",
     ents_list=["PER", "FNR", "TLF", "EPOST", "finne"],
     n_process=1,
-    print_progress=True
+    print_progress=True,
 )
 
 df_kunspacy
+# %%
+def fjern_ider(df, col):
+    """
+    Dersom en tallrekke på 5 eller flere tall er i en string, bytt det ut med TALL
+    
+    Dersom en tallrekke på 4 tall er med, bytt det ut med ÅR
+    """
+    df_out = df.copy()
+    df_out[col].replace(to_replace="\d{5,}", value="TALL", regex=True, inplace=True)
+    df_out[col].replace(to_replace="\d{4}", value="ÅR", regex=True, inplace=True)
+    return df_out
+
+df_tørketrommel = fjern_ider(df_vask_toppoppgavene, "om_nettsidene_vasket")
 # %%
