@@ -29,7 +29,7 @@ custom_patterns = [
     {"label": "TLF", "pattern": "[TLF]"},
     {"label": "EPOST", "pattern": "[EPOST]"},
     {"label": "finne", "pattern": [{"lower": "finne"}]},
-    {"label": "andre", "pattern": [{"lower": "andre"}]}
+    {"label": "andre", "pattern": [{"lower": "andre"}]},
 ]
 ruler_config = {
     "phrase_matcher_attr": None,
