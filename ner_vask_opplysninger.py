@@ -13,7 +13,6 @@ from pyjstat import pyjstat
 logging.basicConfig(level=logging.INFO)
 
 # %%
-from pathlib import Path
 
 patterns_folder = Path("./patterns/")
 
