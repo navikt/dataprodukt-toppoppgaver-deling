@@ -58,6 +58,18 @@ for i in kun_fritekst:
 # slå sammen med kategorisvar
 siste = pd.concat([ny_df, kategorisvar], ignore_index=True)
 # %%
+# aggreger til nærmeste time
+siste["start"] = pd.to_datetime(
+    siste["start"]
+)
+siste["complete"] = pd.to_datetime(siste["complete"])
+siste["done"] = pd.to_datetime(siste["done"])
+siste["start"] = siste["start"].dt.round(
+    "H"
+)
+siste["complete"] = siste["complete"].dt.round("H")
+siste["done"] = siste["done"].dt.round("H")
+# %%
 def find_substring_regex(regex: str, df, case=False):
     """
     Finn rader i en dataframe der innholdet matcher regulæruttrykket
