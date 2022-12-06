@@ -80,5 +80,18 @@ def fjern_ider(df, col):
     df_out[col].replace(to_replace="\d{4}", value="ÅR", regex=True, inplace=True)
     return df_out
 
+
 df_tørketrommel = fjern_ider(df_vask_toppoppgavene, "om_nettsidene_vasket")
+# %%
+tid = ["start", "complete", "done"]
+df_vask_toppoppgavene["start"] = pd.to_datetime(
+    df_vask_toppoppgavene["start"]
+)  # sett til datetime
+df_vask_toppoppgavene["complete"] = pd.to_datetime(df_vask_toppoppgavene["complete"])
+df_vask_toppoppgavene["done"] = pd.to_datetime(df_vask_toppoppgavene["done"])
+df_vask_toppoppgavene["start"] = df_vask_toppoppgavene["start"].dt.round(
+    "H"
+)  # aggregert til nærmeste time
+df_vask_toppoppgavene["complete"] = df_vask_toppoppgavene["complete"].dt.round("H")
+df_vask_toppoppgavene["done"] = df_vask_toppoppgavene["done"].dt.round("H")
 # %%
