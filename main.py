@@ -57,3 +57,17 @@ for i in kun_fritekst:
 # %%
 # slå sammen med kategorisvar
 siste = pd.concat([ny_df, kategorisvar], ignore_index=True)
+# %%
+def find_substring_regex(regex: str, df, case=False):
+    """
+    Finn rader i en dataframe der innholdet matcher regulæruttrykket
+    """
+    textlikes = df.select_dtypes(include=[object, "string"])
+    return df[
+        textlikes.apply(
+            lambda column: column.str.contains(regex, regex=True, case=case, na=False)
+        ).any(axis=1)
+    ]
+treff = find_substring_regex(r"\s(PER|FNR|TLF|EPOST)\s", siste)
+# %%
+len(treff) / len(siste) * 100 # prosentandel svar med treff på ENTS fra NER
