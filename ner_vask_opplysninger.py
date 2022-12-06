@@ -99,20 +99,18 @@ def flashtext_sladd(df, text_col_input, text_col_output=None):
 
     processor.add_keywords_from_dict(keyword_dict)
 
-    # lager en kopi for å ikke endre på input-dataframen
-    df_out = df.copy()
 
     # gjør en replace av alle søketermene med den grupperte versjonen av termen
     if text_col_output:
-        df_out[text_col_output] = (
-            df_out[text_col_input].astype(str).apply(processor.replace_keywords)
+        df[text_col_output] = (
+            df[text_col_input].astype(str).apply(processor.replace_keywords)
         )
     else:
-        df_out[text_col_input] = (
-            df_out[text_col_input].astype(str).apply(processor.replace_keywords)
+        df[text_col_input] = (
+            df[text_col_input].astype(str).apply(processor.replace_keywords)
         )
 
-    return df_out
+    return df
 
 
 # %%
@@ -133,8 +131,6 @@ def regex_vask_df(df, entity, text_col_input, text_col_output=None):
         Dersom dette ikke angis legges output i text_col_input-kolonnen.
 
     """
-    # lager en kopi for å ikke endre på input-dataframen
-    df_out = df.copy()
 
     regex_pattern = regex_patterns[entity]["pattern"]
     regex_pat = re.compile(regex_pattern, flags=re.IGNORECASE)
@@ -145,9 +141,9 @@ def regex_vask_df(df, entity, text_col_input, text_col_output=None):
     else:
         out_col = text_col_input
 
-    df_out[out_col] = df_out[text_col_input].replace(regex_pat, tag, regex=True)
+    df[out_col] = df[text_col_input].replace(regex_pat, tag, regex=True)
 
-    return df_out
+    return df
 
 
 # %%
@@ -181,23 +177,21 @@ def spacy_vask(
         True om funksjonen skal printe hvor langt den har kommet underveis
 
     """
-    # lager en kopi for å ikke endre på input-dataframen
-    df_out = df.copy()
 
     # velger å la tomme tekst-celler få en tom string
-    df_out["temp_text_col"] = df_out[text_col_input].fillna("")
+    df["temp_text_col"] = df[text_col_input].fillna("")
 
     if text_col_output:
         out_col = text_col_output
     else:
         out_col = text_col_input
 
-    df_out[out_col] = np.empty((len(df_out), 0)).tolist()
+    df[out_col] = np.empty((len(df), 0)).tolist()
 
-    for ind, doc in enumerate(nlp.pipe(df_out["temp_text_col"], n_process=n_process)):
+    for ind, doc in enumerate(nlp.pipe(df["temp_text_col"], n_process=n_process)):
         if ind % 5000 == 0 and print_progress == True:
             logging.info(f"Nå på tekst nr: {ind} - {min(ind + 5000-1, len(df))}")
-        clean_text = df_out["temp_text_col"].loc[ind]
+        clean_text = df["temp_text_col"].loc[ind]
         for ent in reversed(doc.ents):
             if ent.label_ in ents_list:
                 clean_text = (
@@ -205,11 +199,11 @@ def spacy_vask(
                     + ent.label_
                     + clean_text[ent.end_char :]
                 )
-        df_out.at[ind, out_col] = clean_text
+        df.at[ind, out_col] = clean_text
 
-    df_out = df_out.drop(columns=["temp_text_col"])
+    df = df.drop(columns=["temp_text_col"])
 
-    return df_out
+    return df
 
 
 # %%
@@ -254,11 +248,9 @@ def sladd_tekster(
         Dersom dette ikke angis legges output i text_col_input-kolonnen.
     """
     start = timeit.default_timer()
-    # lager en kopi for å ikke endre på input-dataframen
-    df_out = df.copy()
 
     if print_progress == True:
-        logging.info(f"**Tokenisering og vasking for {len(df_out)} tekster**")
+        logging.info(f"**Tokenisering og vasking for {len(df)} tekster**")
         logging.info("Starter vasking av følgende entiteter")
         logging.info(
             [
@@ -269,9 +261,9 @@ def sladd_tekster(
         )
 
     # re-indekserer dataframen for å være sikker på at hver indeksverdi er unik
-    df_out = df_out.reset_index(drop=True)
+    df = df.reset_index(drop=True)
 
-    df_out["temp_text_col"] = df_out[text_col_input]
+    df["temp_text_col"] = df[text_col_input]
     if text_col_output:
         out_col = text_col_output
     else:
@@ -281,33 +273,33 @@ def sladd_tekster(
     if "FNR" in ents_list:
         if print_progress == True:
             logging.info(f"Kjører regex for FNR...")
-        df_out = regex_vask_df(df_out, entity="FNR", text_col_input="temp_text_col")
+        df = regex_vask_df(df, entity="FNR", text_col_input="temp_text_col")
     if "TLF" in ents_list:
         if print_progress == True:
             logging.info(f"Kjører regex for TLF...")
-        df_out = regex_vask_df(df_out, entity="TLF", text_col_input="temp_text_col")
+        df = regex_vask_df(df, entity="TLF", text_col_input="temp_text_col")
     if "EPOST" in ents_list:
         if print_progress == True:
             logging.info("Kjører regex for EPOST...")
-        df_out = regex_vask_df(df_out, entity="EPOST", text_col_input="temp_text_col")
+        df = regex_vask_df(df, entity="EPOST", text_col_input="temp_text_col")
 
     # entitetstyper som håndteres med spacy NER-modell:
     if print_progress == True:
         logging.info("Starter NER...")
-    df_out = spacy_vask(
-        df_out, "temp_text_col", out_col, ents_list, n_process, print_progress
+    df = spacy_vask(
+        df, "temp_text_col", out_col, ents_list, n_process, print_progress
     )
 
     if ekstra_vask_av_navn == True:
         if print_progress == True:
             logging.info("Starter ekstra vask av personnavn mot SSB-lister...")
-        df_out = flashtext_sladd(df_out, out_col)
+        df = flashtext_sladd(df, out_col)
 
     stop = timeit.default_timer()
     if print_progress == True:
-        logging.info(f"  {len(df_out)} tekster vasket på {'%.3f'%(stop - start)} sek")
+        logging.info(f"  {len(df)} tekster vasket på {'%.3f'%(stop - start)} sek")
 
-    return df_out
+    return df
 
 
 # %%
@@ -337,21 +329,18 @@ def flashtext_extract(df, text_col_input, col_output=None):
 
     processor.add_keywords_from_list(navn)
 
-    # lager en kopi for å ikke endre på input-dataframen
-    df_out = df.copy()
-
     # gjør en replace av alle søketermene med den grupperte versjonen av termen
     if col_output:
-        df_out[col_output] = (
-            df_out[text_col_input]
+        df[col_output] = (
+            df[text_col_input]
             .astype(str)
             .apply(lambda x: list(set(processor.extract_keywords(x))))
         )
     else:
-        df_out[text_col_input] = (
-            df_out[text_col_input]
+        df[text_col_input] = (
+            df[text_col_input]
             .astype(str)
             .apply(lambda x: list(set(processor.extract_keywords(x))))
         )
 
-    return df_out
+    return df
