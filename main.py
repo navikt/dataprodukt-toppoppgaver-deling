@@ -20,7 +20,7 @@ kun_fritekst = [
     "Fortell oss om hva som er vanskelig",
     "Hva ville du finne statistikk, analyse eller forskning om?",
     "Hva prøvde du å finne informasjon om?",
-    "Noe mer du vil si om nettsidene våre?"
+    "Noe mer du vil si om nettsidene våre?",
 ]
 kategoriske = list(set(df.columns) - set(kun_fritekst))
 # %%
@@ -34,41 +34,57 @@ def kun_fritekstsvar(df, kolonner):
 
 
 fritekstsvar = kun_fritekstsvar(df, kolonner=kun_fritekst)
-kategorisvar = (df[~df.id.isin(fritekstsvar.id)])
+kategorisvar = df[~df.id.isin(fritekstsvar.id)]
 # %%
 ny_df = fritekstsvar.copy()
 
 for i, v in enumerate(kun_fritekst, start=1):
     logging.info(f"Vasker nå spørsmål nr {i}: {v}")
-    print(f"Vasker nå spørsmål nr {i}: {v}")
     ny_df = ner_vask_opplysninger.sladd_tekster(
         df=ny_df,
         ents_list=["PER", "FNR", "TLF", "EPOST", "finne", "andre"],
         ekstra_vask_av_navn=True,
-        text_col_input=v
+        text_col_input=v,
     )
-logging.info(f"Datasettet er vasket og klart til å hentes")
+logging.info(f"Datasettet er vasket og klart til å hentes 🧼 🪣")
 # %%
 # fjern tall som kan representere år, tlfnr eller beløp
 for i in kun_fritekst:
     ny_df[i].replace(to_replace="\d{5,}", value="TALL", regex=True, inplace=True)
 for i in kun_fritekst:
     ny_df[i].replace(to_replace="\d{4}", value="ÅR", regex=True, inplace=True)
+
 # %%
 # slå sammen med kategorisvar
 siste = pd.concat([ny_df, kategorisvar], ignore_index=True)
 # %%
+# vask URLer
+def vask_urler(df, urler=list):
+    """ """
+    # urler = ["startUrl", "doneUrl"]
+    # urls = urler
+    for i in urler:
+        df[i].replace(
+            to_replace=r"[0-9a-z.-]{36}", value="ANONYMISERT", regex=True, inplace=True
+        )
+        df[i].replace(
+            to_replace=r"\d{5,}", value="ANONYMISERT", regex=True, inplace=True
+        )
+    return siste
+
+
+siste = vask_urler(df=siste, urler=["startUrl", "doneUrl"])
+# %%
 # aggreger til nærmeste time
-siste["start"] = pd.to_datetime(
-    siste["start"]
-)
-siste["complete"] = pd.to_datetime(siste["complete"])
-siste["done"] = pd.to_datetime(siste["done"])
-siste["start"] = siste["start"].dt.round(
-    "H"
-)
-siste["complete"] = siste["complete"].dt.round("H")
-siste["done"] = siste["done"].dt.round("H")
+def runde_timer(df, tid=list):
+    """ """
+    for i in tid:
+        df[i] = pd.to_datetime(df[i])
+        df[i] = df[i].dt.round("H")
+    return df
+
+
+siste = runde_timer(df=siste, tid=["start", "complete", "done"])
 # %%
 def find_substring_regex(regex: str, df, case=False):
     """
@@ -80,6 +96,17 @@ def find_substring_regex(regex: str, df, case=False):
             lambda column: column.str.contains(regex, regex=True, case=case, na=False)
         ).any(axis=1)
     ]
+
+
 treff = find_substring_regex(r"\s(PER|FNR|TLF|EPOST)\s", siste)
 # %%
-len(treff) / len(siste) * 100 # prosentandel svar med treff på ENTS fra NER
+logging.info(
+    f"Andelen fritekstsvar av alle svar er {len(fritekstsvar) / len(siste) * 100:.3f}%"
+)
+logging.info(
+    f"Andelen svar som inneholder treff på NER er {len(treff) / len(siste) * 100:.3f}%"
+)
+logging.info(
+    f"Andelen treff blant alle fritekstsvar er {len(treff)/len(fritekstsvar) * 100:.3f}%"
+)
+# %%

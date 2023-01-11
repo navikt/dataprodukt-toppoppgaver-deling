@@ -72,7 +72,7 @@ df_kunspacy
 def fjern_ider(df, col):
     """
     Dersom en tallrekke på 5 eller flere tall er i en string, bytt det ut med TALL
-    
+
     Dersom en tallrekke på 4 tall er med, bytt det ut med ÅR
     """
     df_out = df.copy()

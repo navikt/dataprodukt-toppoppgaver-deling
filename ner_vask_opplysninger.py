@@ -99,7 +99,6 @@ def flashtext_sladd(df, text_col_input, text_col_output=None):
 
     processor.add_keywords_from_dict(keyword_dict)
 
-
     # gjør en replace av alle søketermene med den grupperte versjonen av termen
     if text_col_output:
         df[text_col_output] = (
@@ -286,9 +285,7 @@ def sladd_tekster(
     # entitetstyper som håndteres med spacy NER-modell:
     if print_progress == True:
         logging.info("Starter NER...")
-    df = spacy_vask(
-        df, "temp_text_col", out_col, ents_list, n_process, print_progress
-    )
+    df = spacy_vask(df, "temp_text_col", out_col, ents_list, n_process, print_progress)
 
     if ekstra_vask_av_navn == True:
         if print_progress == True:
