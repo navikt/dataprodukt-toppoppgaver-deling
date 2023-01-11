@@ -59,8 +59,6 @@ siste = pd.concat([ny_df, kategorisvar], ignore_index=True)
 # vask URLer
 def vask_urler(df, urler=list):
     """ """
-    # urler = ["startUrl", "doneUrl"]
-    # urls = urler
     for i in urler:
         df[i].replace(
             to_replace=r"[0-9a-z.-]{36}", value="ANONYMISERT", regex=True, inplace=True
