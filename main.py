@@ -5,8 +5,6 @@ import pandas as pd
 
 import ner_vask_opplysninger
 
-pd.set_option("max_colwidth", 300)
-
 # %%
 df = pd.read_excel("data/final/merged.xlsx")
 # %%
