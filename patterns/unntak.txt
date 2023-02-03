@@ -4,3 +4,5 @@ sommer
 fred
 finne
 andre
+endre
+jo
