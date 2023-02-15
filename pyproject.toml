@@ -19,6 +19,7 @@ pandas = "^1.5.1"
 black = "^22.10.0"
 ipykernel = "^6.17.1"
 openpyxl = "^3.0.10"
+xlsxwriter = "^3.0.8"
 
 [build-system]
 requires = ["poetry-core"]
