@@ -15,3 +15,5 @@ Deretter bruker vi [Name Entity Recognition](https://en.wikipedia.org/wiki/Named
 For hvert treff erstatter vi innholdet med en annen tekst for å kjennetegne hva slags data modellen har erstattet: Navn, telefonnummer og epost.
 
 Deretter fører vi statistikk på antall treff totalt sett og som andel av fritekstsvarene for å kartlegge omfanget.
+
+Merk at modellen er litt overivrig. Den prøver å finne treff blant ord som ligner navn, og derfor må vi lage unntak for ord som er verb, substantiv og navn. Disse ligger i filen [unntak](patterns/unntak.txt) i mappen "patterns".
