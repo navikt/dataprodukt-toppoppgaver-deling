@@ -10,7 +10,7 @@ Først skiller vi på kategorivariabler og svar som inneholder  fritekst. Dette 
 
 Deretter sjekker vi om det er noen treff på fornavn eller etternavn blant fritekstsvarene som dukker opp i SSB sine navnelister.
 
-Deretter bruker vi [Name Entity Recognition](https://en.wikipedia.org/wiki/Named-entity_recognition) (NER) fra Spacy-biblioteket. [Spacy](https://spacy.io/) er en modul for maskinlæring for NLP. 
+Deretter bruker vi [Name Entity Recognition](https://en.wikipedia.org/wiki/Named-entity_recognition) (NER) fra Spacy-biblioteket. [Spacy](https://spacy.io/) er en modul for natural language processing, en gren innenfor maskinlæring. 
 
 For hvert treff erstatter vi innholdet med en annen tekst for å kjennetegne hva slags data modellen har erstattet: Navn, telefonnummer og epost.
 
