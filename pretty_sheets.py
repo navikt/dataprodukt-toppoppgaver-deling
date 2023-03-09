@@ -60,20 +60,50 @@ def new_write_sheets(data, sheet_name, path, hide=False, hide_columns=str):
 # %%
 df = pd.read_excel("data/demo.xlsx")
 # %%
-df2 = df.copy()
-df2.fillna("", inplace=True)
-df2 = df2.reset_index().to_dict(orient="list")
+# label categorical and open ended answers
+
 # %%
-def make_workbook(data, path, hide=False):
+def transform_dataframe_to_dict(data):
     """
-    Create workbook and sheets with custom styling 
+    Returns a dict from dataframe. Does not modify dataframe.
+
+    Replace all empty cells with empty string
+    Convert dtypes from datetime to string
+    Drop index column before converting to dict
+    """
+    data = df.copy()
+    data.fillna("", inplace=True)
+    data = data.assign(**data.select_dtypes(["datetime"]).astype(str))
+    data = data.reset_index().to_dict(orient="list")
+    del data["index"]
+    return data
+
+
+df2 = transform_dataframe_to_dict(df)
+
+# %%
+def make_workbook(data: dict, path: str, hide=False, hide_columns=list):
+    """
+    Create workbook and sheets with custom styling
+
+    Supports
+    Adds autofilter to all columns
+    Freeze top row
+    Hide multiple columns
 
     See writing dicts of data using xlsxwriter at https://xlsxwriter.readthedocs.io/working_with_data.html
+
+    Parameters:
+    ----------
+    data: dict, required
+        The dictionary to create a workbook from
+    path: string, required
+        Set path to write the workboox
+    hide: bool, optional
+        Set True if you want to hide columns
+    hide_columns: list, required if hide is True
+        Pass a list of strings representing the range of columns to hide, f.ex 'A:A' hides only column A while 'A:Z' hides all columns from A to Z
     """
-    # TO DO
-    # * Hide multiple columns
-    # * Date format conversion
-    # * Label categorical and open ended answers
     workbook = xlsxwriter.Workbook(path)
     worksheet = workbook.add_worksheet()
 
@@ -89,9 +119,8 @@ def make_workbook(data, path, hide=False):
     cell_format.set_align("left")
     cell_format.set_align("vcenter")
     worksheet.set_column_pixels(0, 37, 230)
-    worksheet.freeze_panes(1, 0)  # frys øverste rad
-    # legg til tabell for filtrering?
-    # worksheet.set_column('A:Z', None, cell_format)
+    worksheet.freeze_panes(1, 0)
+    worksheet.autofilter(0, 0, df.shape[0], df.shape[1])
 
     col_num = 0
     for key, value in data.items():
@@ -99,9 +128,12 @@ def make_workbook(data, path, hide=False):
         worksheet.write_column(1, col_num, value, cell_format)
         col_num += 1
     if hide == True:
-        worksheet.set_column("A:A", None, None, {"hidden": 1})
+        for i in hide_columns:
+            worksheet.set_column(i, None, None, {"hidden": 1})
     workbook.close()
 
 
 # %%
-make_workbook(df2, "data/write_dict.xlsx", hide=True)
+make_workbook(df2, "data/write_dict.xlsx", hide=True, hide_columns=["B:E", "AB:AM"])
+
+# %%
