@@ -35,10 +35,11 @@ def make_workbook(
     """
     Create workbook and sheets with custom styling
 
-    Supports
-    Adds autofilter to all columns
-    Freeze top row
-    Hide multiple columns
+    Supports:
+    
+    * Adds autofilter to all columns
+    * Freeze top row
+    * Hide multiple columns
 
     See writing dicts of data using xlsxwriter at https://xlsxwriter.readthedocs.io/working_with_data.html
 
