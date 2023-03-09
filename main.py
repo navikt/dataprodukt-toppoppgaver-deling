@@ -110,9 +110,11 @@ logging.info(
 )
 
 # %%
-new_ids = range(1,len(siste)+1)
-siste['id'] = new_ids
-siste.columns = [f'{i} fritekst' if i not in kategoriske else f'{i} kategori' for i in siste.columns]
+new_ids = range(1, len(siste) + 1)
+siste["id"] = new_ids
+siste.columns = [
+    f"{i} fritekst" if i not in kategoriske else f"{i} kategori" for i in siste.columns
+]
 siste.columns
 # %%
 df2 = transform_dataframe_to_dict(siste)

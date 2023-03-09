@@ -36,7 +36,7 @@ def make_workbook(
     Create workbook and sheets with custom styling
 
     Supports:
-    
+
     * Adds autofilter to all columns
     * Freeze top row
     * Hide multiple columns
@@ -48,7 +48,7 @@ def make_workbook(
     data: dict, required
         The dictionary to create a workbook from
     path: string, required
-        Set path to write the workboox
+        Set path to write the workbook
     autofilter: bool, optional
         Add autofilter to a range of columns in workbook, starting from the first column and row
     last_row: int, required if autofilter is True
