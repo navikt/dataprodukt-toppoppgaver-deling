@@ -2,65 +2,8 @@
 import logging
 
 import xlsxwriter
-import pandas as pd
 
 logging.basicConfig(level=logging.INFO)
-
-# %%
-def new_write_sheets(data, sheet_name, path, hide=False, hide_columns=str):
-    """
-    Write spreadsheets, hide and adjust columns as options
-
-    TO DO
-    support multiple ranges of columns to hide
-    support multiple dataframes
-
-    Parameters:
-    -----------
-    data: df, required
-        dataframe to write
-    sheet_name: string, required
-        name of sheet to write
-    path: string, required
-        path and filename to write to, f.ex data/demo-align.xlsx
-    hide: bool, optional
-        do you want to hide some columns
-    hide_columns: string, optional
-        the range of columns to hide, f.ex A:A hides column A, while A:C hides columns A through C
-    """
-    writer = pd.ExcelWriter(path, engine="xlsxwriter")
-
-    data.to_excel(writer, sheet_name=sheet_name, startrow=1, header=False, index=False)
-    workbook = writer.book
-
-    # alignment and font
-    cell_format = workbook.add_format({"valign": "vcenter", "align": "left"})
-    cell_format.set_align("left")
-    cell_format.set_align("vcenter")
-    cell_format.set_text_wrap()
-    cell_format.set_font_name("Arial")
-    cell_format.set_font_size(14)
-
-    # adjust sheet
-    worksheet = writer.sheets[sheet_name]
-    (max_row, max_col) = df.shape
-    column_settings = [{"header": column} for column in df.columns]
-
-    # format table
-    worksheet.add_table(0, 0, max_row, max_col - 1, {"columns": column_settings})
-
-    worksheet.set_column("A:Z", None, cell_format)
-    worksheet.set_column_pixels(0, len(df.columns), 230)
-    worksheet.freeze_panes(1, 0)
-    if hide == True:
-        worksheet.set_column(hide_columns, None, None, {"hidden": 1})
-    writer.close()
-
-
-# %%
-df = pd.read_excel("data/demo.xlsx")
-# %%
-# label categorical and open ended answers
 
 # %%
 def transform_dataframe_to_dict(data):
@@ -71,18 +14,24 @@ def transform_dataframe_to_dict(data):
     Convert dtypes from datetime to string
     Drop index column before converting to dict
     """
-    data = df.copy()
-    data.fillna("", inplace=True)
-    data = data.assign(**data.select_dtypes(["datetime"]).astype(str))
-    data = data.reset_index().to_dict(orient="list")
-    del data["index"]
-    return data
+    df = data.copy()
+    df.fillna("", inplace=True)
+    df = df.assign(**data.select_dtypes(["datetime"]).astype(str))
+    df = df.reset_index().to_dict(orient="list")
+    del df["index"]
+    return df
 
-
-df2 = transform_dataframe_to_dict(df)
 
 # %%
-def make_workbook(data: dict, path: str, hide=False, hide_columns=list):
+def make_workbook(
+    data: dict,
+    path: str,
+    autofilter=False,
+    last_row=0,
+    last_col=0,
+    hide=False,
+    hide_columns=list,
+):
     """
     Create workbook and sheets with custom styling
 
@@ -99,6 +48,12 @@ def make_workbook(data: dict, path: str, hide=False, hide_columns=list):
         The dictionary to create a workbook from
     path: string, required
         Set path to write the workboox
+    autofilter: bool, optional
+        Add autofilter to a range of columns in workbook, starting from the first column and row
+    last_row: int, required if autofilter is True
+        Specify the last row the autofilter is set to
+    last_col: int, required if autofilter is True
+        Specify the last column the autofilter is set to
     hide: bool, optional
         Set True if you want to hide columns
     hide_columns: list, required if hide is True
@@ -120,7 +75,8 @@ def make_workbook(data: dict, path: str, hide=False, hide_columns=list):
     cell_format.set_align("vcenter")
     worksheet.set_column_pixels(0, 37, 230)
     worksheet.freeze_panes(1, 0)
-    worksheet.autofilter(0, 0, df.shape[0], df.shape[1])
+    if autofilter == True:
+        worksheet.autofilter(0, 0, last_row, last_col)
 
     col_num = 0
     for key, value in data.items():
@@ -131,9 +87,3 @@ def make_workbook(data: dict, path: str, hide=False, hide_columns=list):
         for i in hide_columns:
             worksheet.set_column(i, None, None, {"hidden": 1})
     workbook.close()
-
-
-# %%
-make_workbook(df2, "data/write_dict.xlsx", hide=True, hide_columns=["B:E", "AB:AM"])
-
-# %%
