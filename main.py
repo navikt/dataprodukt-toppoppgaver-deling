@@ -4,6 +4,7 @@ import logging
 import pandas as pd
 
 import ner_vask_opplysninger
+from pretty_sheets import make_workbook, transform_dataframe_to_dict
 
 # %%
 df = pd.read_excel("data/final/merged.xlsx")
@@ -106,5 +107,23 @@ logging.info(
 )
 logging.info(
     f"Andelen treff blant alle fritekstsvar er {len(treff)/len(fritekstsvar) * 100:.3f}%"
+)
+
+# %%
+new_ids = range(1,len(siste)+1)
+siste['id'] = new_ids
+siste.columns = [f'{i} fritekst' if i not in kategoriske else f'{i} kategori' for i in siste.columns]
+siste.columns
+# %%
+df2 = transform_dataframe_to_dict(siste)
+# %%
+make_workbook(
+    data=df2,
+    path="data/write_dict.xlsx",
+    autofilter=True,
+    last_row=len(siste),
+    last_col=len(siste.columns),
+    hide=True,
+    hide_columns=["B:E", "AB:AM"],
 )
 # %%
