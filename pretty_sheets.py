@@ -31,6 +31,7 @@ def make_workbook(
     last_col=0,
     hide=False,
     hide_columns=list,
+    background_color="#FFFFFF",
 ):
     """
     Create workbook and sheets with custom styling
@@ -59,6 +60,8 @@ def make_workbook(
         Set True if you want to hide columns
     hide_columns: list, required if hide is True
         Pass a list of strings representing the range of columns to hide, f.ex 'A:A' hides only column A while 'A:Z' hides all columns from A to Z
+    background_color: str, optional
+        Set a custom color using a HEX code, else defaults to white
     """
     workbook = xlsxwriter.Workbook(path)
     worksheet = workbook.add_worksheet()
@@ -69,11 +72,13 @@ def make_workbook(
     header_format.set_text_wrap()
     header_format.set_align("left")
     header_format.set_align("vcenter")
+    header_format.set_bg_color(background_color)
 
     cell_format = workbook.add_format({"font_name": "Arial", "font_size": 14})
     cell_format.set_text_wrap()
     cell_format.set_align("left")
     cell_format.set_align("vcenter")
+    cell_format.set_bg_color(background_color)
     worksheet.set_column_pixels(0, 37, 230)
     worksheet.freeze_panes(1, 0)
     if autofilter == True:

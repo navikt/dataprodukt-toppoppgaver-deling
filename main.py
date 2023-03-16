@@ -35,6 +35,9 @@ def kun_fritekstsvar(df, kolonner):
 fritekstsvar = kun_fritekstsvar(df, kolonner=kun_fritekst)
 kategorisvar = df[~df.id.isin(fritekstsvar.id)]
 # %%
+fritekstsvar["inneholder"] = "Ja"
+kategorisvar["inneholder"] = "Nei"
+# %%
 ny_df = fritekstsvar.copy()
 
 for i, v in enumerate(kun_fritekst, start=1):
@@ -126,6 +129,8 @@ make_workbook(
     last_row=len(siste),
     last_col=len(siste.columns),
     hide=True,
-    hide_columns=["B:E", "AB:AM"],
+    hide_columns=["B:E", "AB:AG"],
+    background_color="#F8F1EC",
 )
+logging.info(f"Regnearket er klart")
 # %%
