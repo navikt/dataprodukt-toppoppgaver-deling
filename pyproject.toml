@@ -71,7 +71,7 @@ dependencies = [
         # via pandas
     "pytz==2023.3",
         # via pandas
-    "requests==2.30.0",
+    "requests==2.31.0",
         # via
         #   -r requirements/main.in
         #   pyjstat
