@@ -25,7 +25,7 @@ cymem==2.0.7
     #   spacy
     #   thinc
 flashtext==2.7
-    # via -r requirements/main.in
+    # via -r main.in
 idna==3.4
     # via requests
 jinja2==3.1.2
@@ -50,7 +50,7 @@ packaging==23.1
     #   thinc
 pandas==2.0.2
     # via
-    #   -r requirements/main.in
+    #   -r main.in
     #   pyjstat
 pathy==0.10.1
     # via spacy
@@ -63,14 +63,14 @@ pydantic==1.10.8
     #   spacy
     #   thinc
 pyjstat==2.4.0
-    # via -r requirements/main.in
+    # via -r main.in
 python-dateutil==2.8.2
     # via pandas
 pytz==2023.3
     # via pandas
-requests==2.30.0
+requests==2.31.0
     # via
-    #   -r requirements/main.in
+    #   -r main.in
     #   pyjstat
     #   spacy
 six==1.16.0
@@ -80,7 +80,7 @@ smart-open==6.3.0
     #   pathy
     #   spacy
 spacy==3.5.3
-    # via -r requirements/main.in
+    # via -r main.in
 spacy-legacy==3.0.12
     # via spacy
 spacy-loggers==1.0.4
