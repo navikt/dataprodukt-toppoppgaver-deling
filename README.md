@@ -1,5 +1,9 @@
 # Deling av svar fra toppoppgaver på nav.no
 
+- [Deling av svar fra toppoppgaver på nav.no](#deling-av-svar-fra-toppoppgaver-på-navno)
+  - [Installasjon på egen maskin](#installasjon-på-egen-maskin)
+
+
 Dette er en mvp for å dele svar fra toppoppgavemålingen på nav.no med andre team i NAV
 
 [main.py](main.py) sjekker om svarene inneholder kjente personopplysninger og fjerner disse før svarene deles med andre team.
@@ -17,3 +21,12 @@ For hvert treff erstatter vi innholdet med en annen tekst for å kjennetegne hva
 Deretter fører vi statistikk på antall treff totalt sett og som andel av fritekstsvarene for å kartlegge omfanget.
 
 Merk at modellen er litt overivrig. Den prøver å finne treff blant ord som ligner navn, og derfor må vi lage unntak for ord som er verb, substantiv og navn. Disse ligger i filen [unntak](patterns/unntak.txt) i mappen "patterns".
+
+## Installasjon på egen maskin
+
+Opprett virtuelt miljø med venv. Deretter start miljøet med `source venv/bin/activate`
+
+Kjør `make install` for å installere pakker og avhengigheter.
+
+Vi anbefaler large modellen for norsk. Last ned datasettet med `python -m spacy download nb_core_news_lg`
+
