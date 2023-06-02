@@ -28,5 +28,5 @@ Opprett virtuelt miljø med venv. Deretter start miljøet med `source venv/bin/a
 
 Kjør `make install` for å installere pakker og avhengigheter.
 
-Vi anbefaler large modellen for norsk. Last ned datasettet med `python -m spacy download nb_core_news_lg`
+Vi anbefaler large modellen for norsk. Last ned datasettet med `python3.10 -m spacy download nb_core_news_lg`
 
