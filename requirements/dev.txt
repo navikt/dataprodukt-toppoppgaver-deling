@@ -28,7 +28,7 @@ executing==1.2.0
     # via stack-data
 ipykernel==6.23.1
     # via -r requirements/dev.in
-ipython==8.13.2
+ipython==8.14.0
     # via ipykernel
 jedi==0.18.2
     # via ipython

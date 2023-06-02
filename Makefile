@@ -17,10 +17,10 @@ update: update-deps init
 
 build:
 	rm -rf dist/
-	python -m build
+	python3.10 -m build
 
 pypi_publish:
-	python -m twine upload --repository pypi dist/*
+	python3.10 -m twine upload --repository pypi dist/*
 
 testpypi_publish:
-	python -m twine upload --repository testpypi dist/*
+	python3.10 -m twine upload --repository testpypi dist/*
