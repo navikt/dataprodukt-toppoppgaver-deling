@@ -1,13 +1,62 @@
 # %%
 import logging
+import json 
 
 import pandas as pd
+from pyjstat import pyjstat
 
 import ner_vask_opplysninger
 from pretty_sheets import make_workbook, transform_dataframe_to_dict
+from navn import hent_fornavn, hent_etternavn
+
 
 # %%
-df = pd.read_excel("data/final/merged.xlsx")
+# hent navn
+df = hent_fornavn()
+
+with open("../data/final/fornavn.json", "w", encoding="utf-8") as f:
+    json.dump(df.json(), f, ensure_ascii=False)
+# %%
+df = hent_etternavn()
+
+with open("../data/final/etternavn.json", "w", encoding="utf-8") as f:
+    json.dump(df.json(), f, ensure_ascii=False)
+
+# %%
+# lag unntak 
+# %%
+def pyjstat_to_df(filsti):
+    """
+    Last inn json-stat data fra JSON-fil og konvertér til dataframe
+    """
+    with open(filsti, "r") as f:
+        j = json.load(f)
+        s = json.dumps(j)
+        dataset = pyjstat.Dataset.read(s)
+        df = dataset.write("dataframe")
+    return df
+
+# %%
+fornavn = pyjstat_to_df("../data/final/fornavn.json")
+fornavn_unik = [_ for _ in fornavn["fornavn"].unique()]
+fornavn_små = [item.lower() for item in fornavn_unik]
+# %%
+etternavn = pyjstat_to_df("../data/final/etternavn.json")
+etternavn = etternavn[
+    ~etternavn["etternavn"].isin(["A-F", "G-K", "L-R", "S-Å"])
+]  # drop alfabetrekken
+etternavn_unik = [_ for _ in etternavn["etternavn"].unique()]
+etternavn_små = [item.lower() for item in etternavn_unik]
+navn = fornavn_små + etternavn_små
+# %%
+# ignorer navn som forveksles med substantiv og verb
+with open("../patterns/unntak.txt") as f:
+    unntak = [line.rstrip() for line in f]
+navn = [n for n in navn if n not in unntak]
+
+# %%
+# last inn data for vask
+df = pd.read_excel("../data/final/merged.xlsx")
 # %%
 kun_fritekst = [
     "Hva kom du til nettstedet for? other",
@@ -124,7 +173,7 @@ df2 = transform_dataframe_to_dict(siste)
 # %%
 make_workbook(
     data=df2,
-    path="data/write_dict.xlsx",
+    path="../data/write_dict.xlsx",
     autofilter=True,
     last_row=len(siste),
     last_col=len(siste.columns),

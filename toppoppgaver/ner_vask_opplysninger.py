@@ -14,10 +14,10 @@ logging.basicConfig(level=logging.INFO)
 
 # %%
 
-patterns_folder = Path("./patterns/")
+with open("../patterns/regex_patterns.txt") as f:
+    regex_patterns = f.read()
 
-regex_patterns_file = patterns_folder / "regex_patterns.txt"
-regex_patterns = json.loads(regex_patterns_file.read_text())
+
 # %%
 nlp = spacy.load(
     "nb_core_news_lg",
@@ -52,11 +52,11 @@ def pyjstat_to_df(filsti):
 
 
 # %%
-fornavn = pyjstat_to_df("data/final/fornavn.json")
+fornavn = pyjstat_to_df("../data/final/fornavn.json")
 fornavn_unik = [_ for _ in fornavn["fornavn"].unique()]
 fornavn_små = [item.lower() for item in fornavn_unik]
 # %%
-etternavn = pyjstat_to_df("data/final/etternavn.json")
+etternavn = pyjstat_to_df("../data/final/etternavn.json")
 etternavn = etternavn[
     ~etternavn["etternavn"].isin(["A-F", "G-K", "L-R", "S-Å"])
 ]  # drop alfabetrekken
@@ -65,11 +65,11 @@ etternavn_små = [item.lower() for item in etternavn_unik]
 navn = fornavn_små + etternavn_små
 # %%
 # ignorer navn som forveksles med substantiv og verb
-with open("./patterns/unntak.txt") as f:
+with open("../patterns/unntak.txt") as f:
     unntak = [line.rstrip() for line in f]
 navn = [n for n in navn if n not in unntak]
 # %%
-def flashtext_sladd(df, text_col_input, text_col_output=None):
+def flashtext_sladd(df, text_col_input, text_col_output=None, name_list = list):
     """Sladding av navn fra SSB-navnelister vha. flashtext
 
     parameters:
@@ -83,7 +83,7 @@ def flashtext_sladd(df, text_col_input, text_col_output=None):
         Dersom dette ikke angis legges output i text_col_input-kolonnen.
 
     """
-    term_liste = navn
+    term_liste = name_list
     replacement = "PER"
 
     # definerer en tom keywordprocessor
@@ -300,7 +300,7 @@ def sladd_tekster(
 
 
 # %%
-def flashtext_extract(df, text_col_input, col_output=None):
+def flashtext_extract(df, text_col_input, col_output=None, term_list=list):
     """Uttrekk av treff på navn fra SSB-navnelister vha. flashtext
 
     parameters:
@@ -314,7 +314,6 @@ def flashtext_extract(df, text_col_input, col_output=None):
         Dersom dette ikke angis legges output i text_col_input-kolonnen.
 
     """
-    term_liste = navn
 
     # definerer en tom keywordprocessor
     processor = KeywordProcessor(case_sensitive=False)
@@ -324,7 +323,7 @@ def flashtext_extract(df, text_col_input, col_output=None):
     processor.non_word_boundaries.add("ø")
     processor.non_word_boundaries.add("å")
 
-    processor.add_keywords_from_list(navn)
+    processor.add_keywords_from_list(term_list)
 
     # gjør en replace av alle søketermene med den grupperte versjonen av termen
     if col_output:
@@ -341,3 +340,5 @@ def flashtext_extract(df, text_col_input, col_output=None):
         )
 
     return df
+
+# %%
