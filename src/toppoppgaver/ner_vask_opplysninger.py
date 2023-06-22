@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO)
 
 # %%
 
-patterns_folder = Path("./patterns/")
+patterns_folder = Path("../patterns/")
 
 regex_patterns_file = patterns_folder / "regex_patterns.txt"
 regex_patterns = json.loads(regex_patterns_file.read_text())
@@ -39,7 +39,7 @@ ruler_config = {
 ruler = nlp.add_pipe("entity_ruler", config=ruler_config)
 ruler.add_patterns(custom_patterns)
 # %%
-def pyjstat_to_df(filsti):
+def pyjstat_to_df(filsti:Path):
     """
     Last inn json-stat data fra JSON-fil og konvertér til dataframe
     """
@@ -52,11 +52,11 @@ def pyjstat_to_df(filsti):
 
 
 # %%
-fornavn = pyjstat_to_df("data/final/fornavn.json")
+fornavn = pyjstat_to_df(Path("../data/final/fornavn.json"))
 fornavn_unik = [_ for _ in fornavn["fornavn"].unique()]
 fornavn_små = [item.lower() for item in fornavn_unik]
 # %%
-etternavn = pyjstat_to_df("data/final/etternavn.json")
+etternavn = pyjstat_to_df(Path("../data/final/etternavn.json"))
 etternavn = etternavn[
     ~etternavn["etternavn"].isin(["A-F", "G-K", "L-R", "S-Å"])
 ]  # drop alfabetrekken
@@ -65,7 +65,7 @@ etternavn_små = [item.lower() for item in etternavn_unik]
 navn = fornavn_små + etternavn_små
 # %%
 # ignorer navn som forveksles med substantiv og verb
-with open("./patterns/unntak.txt") as f:
+with open("../patterns/unntak.txt") as f:
     unntak = [line.rstrip() for line in f]
 navn = [n for n in navn if n not in unntak]
 # %%

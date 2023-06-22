@@ -7,7 +7,7 @@ import ner_vask_opplysninger
 from pretty_sheets import make_workbook, transform_dataframe_to_dict
 
 # %%
-df = pd.read_excel("data/final/merged.xlsx")
+df = pd.read_excel("../data/final/merged.xlsx")
 # %%
 kun_fritekst = [
     "Hva kom du til nettstedet for? other",
@@ -124,7 +124,7 @@ df2 = transform_dataframe_to_dict(siste)
 # %%
 make_workbook(
     data=df2,
-    path="data/write_dict.xlsx",
+    path="../data/write_dict.xlsx",
     autofilter=True,
     last_row=len(siste),
     last_col=len(siste.columns),
