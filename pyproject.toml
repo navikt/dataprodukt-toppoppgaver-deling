@@ -1,0 +1,39 @@
+[project]
+name = "dataprodukt-toppoppgaver-deling"
+version = "0.1.0"
+description = "app for å fjerne personopplysninger fra fritekstsvar og dele data med andre team internt i NAV"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+
+dependencies = [
+    "requests",
+    "pyjstat",
+    "spacy",
+    "flashtext",
+    "pandas",
+    "taskanalytics-data-wrapper"
+]
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "ipykernel",
+    "openpyxl",
+    "xlsxwriter"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/navikt/dataprodukt-toppoppgaver-deling"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+exclude = ["tests", "testing"]
+
+
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
