@@ -6,7 +6,7 @@
 
 Dette er en mvp for å dele svar fra toppoppgavemålingen på nav.no med andre team i NAV
 
-[main.py](main.py) sjekker om svarene inneholder kjente personopplysninger og fjerner disse før svarene deles med andre team.
+[main.py](src/toppoppgaver/main.py) sjekker om svarene inneholder kjente personopplysninger og fjerner disse før svarene deles med andre team.
 
 Hvordan sjekker vi om det er personopplysninger i fritekstsvar?
 
@@ -20,7 +20,7 @@ For hvert treff erstatter vi innholdet med en annen tekst for å kjennetegne hva
 
 Deretter fører vi statistikk på antall treff totalt sett og som andel av fritekstsvarene for å kartlegge omfanget.
 
-Merk at modellen er litt overivrig. Den prøver å finne treff blant ord som ligner navn, og derfor må vi lage unntak for ord som er verb, substantiv og navn. Disse ligger i filen [unntak](patterns/unntak.txt) i mappen "patterns".
+Merk at modellen er litt overivrig. Den prøver å finne treff blant ord som ligner navn, og derfor må vi lage unntak for ord som er verb, substantiv og navn. Disse ligger i filen [unntak](/src/patterns/unntak.txt) i mappen "patterns".
 
 ## Installasjon på egen maskin
 
