@@ -26,12 +26,6 @@ def get_survey_questions(dataframe: pd.DataFrame):
 
 
 # %%
-df = pd.read_csv(Path("../data/final/survey.csv"))
-# %%
-q = get_survey_questions(df)
-
-
-# %%
 def return_open_answers(dataframe: pd.DataFrame):
     """
     Returns all variables containing open ended answers
