@@ -20,7 +20,8 @@ dev = [
     "black",
     "ipykernel",
     "openpyxl",
-    "xlsxwriter"
+    "xlsxwriter",
+    "python-dotenv"
 ]
 
 [project.urls]
