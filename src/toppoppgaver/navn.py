@@ -3,6 +3,7 @@ import json
 
 import requests
 
+
 # %%
 def hent_fornavn():
     """
@@ -35,6 +36,7 @@ df = hent_fornavn()
 
 with open("data/final/fornavn.json", "w", encoding="utf-8") as f:
     json.dump(df.json(), f, ensure_ascii=False)
+
 
 # %%
 def hent_etternavn():

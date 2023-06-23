@@ -22,6 +22,8 @@ kun_fritekst = [
     "Noe mer du vil si om nettsidene våre?",
 ]
 kategoriske = list(set(df.columns) - set(kun_fritekst))
+
+
 # %%
 def kun_fritekstsvar(df, kolonner):
     """
@@ -59,6 +61,8 @@ for i in kun_fritekst:
 # %%
 # slå sammen med kategorisvar
 siste = pd.concat([ny_df, kategorisvar], ignore_index=True)
+
+
 # %%
 # vask URLer
 def vask_urler(df, urler=list):
@@ -76,6 +80,8 @@ def vask_urler(df, urler=list):
 
 
 siste = vask_urler(df=siste, urler=["startUrl", "doneUrl"])
+
+
 # %%
 # aggreger til nærmeste time
 def runde_timer(df, tid=list):
@@ -87,6 +93,8 @@ def runde_timer(df, tid=list):
 
 
 siste = runde_timer(df=siste, tid=["start", "complete", "done"])
+
+
 # %%
 def find_substring_regex(regex: str, df, case=False):
     """

@@ -21,6 +21,8 @@ kun_fritekst = [
     "Hva prøvde du å finne informasjon om?",
     "Noe mer du vil si om nettsidene våre?",
 ]
+
+
 # %%
 def kun_fritekstsvar(df, kolonner):
     """
@@ -68,6 +70,8 @@ df_kunspacy = ner_vask_opplysninger.spacy_vask(
 )
 
 df_kunspacy
+
+
 # %%
 def fjern_ider(df, col):
     """

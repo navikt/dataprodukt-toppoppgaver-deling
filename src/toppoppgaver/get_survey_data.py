@@ -3,8 +3,9 @@ from pathlib import Path
 
 import pandas as pd
 
+
 # %%
-def get_survey_questions(dataset_path:Path):
+def get_survey_questions(dataset_path: Path):
     """
     Get survey questions from a Task analytics survey as a dictionary
 
@@ -26,6 +27,4 @@ def get_survey_questions(dataset_path:Path):
     return questions
 
 
-# %%
-q = get_survey_questions(Path('../data/final/survey.csv'))
 # %%

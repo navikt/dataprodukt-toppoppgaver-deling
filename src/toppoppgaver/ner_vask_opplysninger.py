@@ -38,8 +38,10 @@ ruler_config = {
 }
 ruler = nlp.add_pipe("entity_ruler", config=ruler_config)
 ruler.add_patterns(custom_patterns)
+
+
 # %%
-def pyjstat_to_df(filsti:Path):
+def pyjstat_to_df(filsti: Path):
     """
     Last inn json-stat data fra JSON-fil og konvertér til dataframe
     """
@@ -68,6 +70,8 @@ navn = fornavn_små + etternavn_små
 with open("../patterns/unntak.txt") as f:
     unntak = [line.rstrip() for line in f]
 navn = [n for n in navn if n not in unntak]
+
+
 # %%
 def flashtext_sladd(df, text_col_input, text_col_output=None):
     """Sladding av navn fra SSB-navnelister vha. flashtext

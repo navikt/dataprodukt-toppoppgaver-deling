@@ -5,6 +5,7 @@ import xlsxwriter
 
 logging.basicConfig(level=logging.INFO)
 
+
 # %%
 def transform_dataframe_to_dict(data):
     """
