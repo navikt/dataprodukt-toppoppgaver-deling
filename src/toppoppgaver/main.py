@@ -1,15 +1,25 @@
 # %%
+import os
 from pathlib import Path
 import logging
 
 import pandas as pd
+from dotenv import load_dotenv
+from taskanalytics_data_wrapper.taskanalytics_api import download_survey
 
 import ner_vask_opplysninger
 from pretty_sheets import make_workbook, transform_dataframe_to_dict
 from get_survey_data import get_survey_questions, return_open_answers
 
 # %%
-df = pd.read_csv(Path("../data/final/survey.csv"))
+load_dotenv()
+email = os.getenv("ta_email")
+password = os.getenv("ta_password")
+organization = os.getenv("ta_organization")
+# %%
+download_survey(username=email, password=password, survey_id="03361", filename="../data/final/new_survey.csv")
+# %%
+df = pd.read_csv(Path("../data/final/new_survey.csv"))
 df = df.iloc[1:]
 questions = get_survey_questions(df)
 kun_fritekst = return_open_answers(df)
