@@ -1,29 +1,18 @@
 # %%
+from pathlib import Path
 import logging
 
 import pandas as pd
 
 import ner_vask_opplysninger
 from pretty_sheets import make_workbook, transform_dataframe_to_dict
-
+from get_survey_data import get_survey_questions, return_open_answers
 # %%
-df = pd.read_excel("../data/final/merged.xlsx")
-# %%
-kun_fritekst = [
-    "Hva kom du til nettstedet for? other",
-    "Hvorfor ikke? other",
-    "Hva er situasjonen din? other",
-    "Hva ville du søke om? other",
-    "Hvem er du? other",
-    "Hva vil du gjøre i stedet? other",
-    "Fortell oss om hva som er vanskelig",
-    "Hva ville du finne statistikk, analyse eller forskning om?",
-    "Hva prøvde du å finne informasjon om?",
-    "Noe mer du vil si om nettsidene våre?",
-]
+df = pd.read_csv(Path("../data/final/survey.csv"))
+df = df.iloc[1:]
+questions = get_survey_questions(df)
+kun_fritekst = return_open_answers(df)
 kategoriske = list(set(df.columns) - set(kun_fritekst))
-
-
 # %%
 def kun_fritekstsvar(df, kolonner):
     """
