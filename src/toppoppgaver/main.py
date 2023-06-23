@@ -7,12 +7,15 @@ import pandas as pd
 import ner_vask_opplysninger
 from pretty_sheets import make_workbook, transform_dataframe_to_dict
 from get_survey_data import get_survey_questions, return_open_answers
+
 # %%
 df = pd.read_csv(Path("../data/final/survey.csv"))
 df = df.iloc[1:]
 questions = get_survey_questions(df)
 kun_fritekst = return_open_answers(df)
 kategoriske = list(set(df.columns) - set(kun_fritekst))
+
+
 # %%
 def kun_fritekstsvar(df, kolonner):
     """
