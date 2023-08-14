@@ -177,7 +177,7 @@ thinc==8.1.10
     # via spacy
 tomli==2.0.1
     # via black
-tornado==6.3.2
+tornado==6.3.3
     # via
     #   ipykernel
     #   jupyter-client
