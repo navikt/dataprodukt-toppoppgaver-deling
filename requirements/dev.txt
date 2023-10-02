@@ -201,7 +201,7 @@ typing-extensions==4.6.3
     # via pydantic
 tzdata==2023.3
     # via pandas
-urllib3==2.0.3
+urllib3==2.0.6
     # via requests
 wasabi==1.1.2
     # via
