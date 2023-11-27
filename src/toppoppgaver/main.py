@@ -7,9 +7,9 @@ import pandas as pd
 from dotenv import load_dotenv
 from taskanalytics_data_wrapper.taskanalytics_api import download_survey
 
-import ner_vask_opplysninger
-from pretty_sheets import make_workbook, transform_dataframe_to_dict
-from get_survey_data import get_survey_questions, return_open_answers
+import toppoppgaver.ner_vask_opplysninger as ner
+from toppoppgaver.pretty_sheets import make_workbook, transform_dataframe_to_dict
+from toppoppgaver.get_survey_data import get_survey_questions, return_open_answers
 
 # %%
 load_dotenv()
@@ -17,7 +17,12 @@ email = os.getenv("ta_email")
 password = os.getenv("ta_password")
 organization = os.getenv("ta_organization")
 # %%
-download_survey(username=email, password=password, survey_id="03361", filename="../data/final/new_survey.csv")
+download_survey(
+    username=email,
+    password=password,
+    survey_id="03373",
+    filename="../data/final/new_survey.csv",
+)
 # %%
 df = pd.read_csv(Path("../data/final/new_survey.csv"))
 df = df.iloc[1:]
@@ -46,7 +51,7 @@ ny_df = fritekstsvar.copy()
 
 for i, v in enumerate(kun_fritekst, start=1):
     logging.info(f"Vasker nå spørsmål nr {i}: {v}")
-    ny_df = ner_vask_opplysninger.sladd_tekster(
+    ny_df = ner.sladd_tekster(
         df=ny_df,
         ents_list=["PER", "FNR", "TLF", "EPOST", "finne", "andre"],
         ekstra_vask_av_navn=True,
