@@ -17,12 +17,5 @@ init:
 
 update: update-deps init
 
-build:
-	rm -rf dist/
-	$(PYTHON) -m build
-
-pypi_publish:
-	$(PYTHON) -m twine upload --repository pypi dist/*
-
-testpypi_publish:
-	$(PYTHON) -m twine upload --repository testpypi dist/*
+format:
+	black --exclude ^/venv .
