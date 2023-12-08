@@ -9,7 +9,11 @@ from taskanalytics_data_wrapper.taskanalytics_api import download_survey
 
 import toppoppgaver.ner_vask_opplysninger as ner
 from toppoppgaver.pretty_sheets import make_workbook, transform_dataframe_to_dict
-from toppoppgaver.get_survey_data import get_survey_questions, return_open_answers
+from toppoppgaver.get_survey_data import (
+    get_survey_questions,
+    return_open_answers,
+    label_questions,
+)
 
 # %%
 load_dotenv()
@@ -25,8 +29,10 @@ download_survey(
 )
 # %%
 df = pd.read_csv(Path("../data/final/new_survey.csv"))
-df = df.iloc[1:]
 questions = get_survey_questions(df)
+questions_labelled = label_questions(questions)
+# %%
+df = df.iloc[1:]
 kun_fritekst = return_open_answers(df)
 kategoriske = list(set(df.columns) - set(kun_fritekst))
 
@@ -134,6 +140,9 @@ siste.columns = [
     f"{i} fritekst" if i not in kategoriske else f"{i} kategori" for i in siste.columns
 ]
 siste.columns
+# %%
+siste.rename(columns=dict(zip(siste.columns, questions_labelled)), inplace=True) # rename columns after categorization and cleaning
+
 # %%
 df2 = transform_dataframe_to_dict(siste)
 # %%

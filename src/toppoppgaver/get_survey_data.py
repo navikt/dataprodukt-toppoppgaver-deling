@@ -49,6 +49,26 @@ def return_open_answers(dataframe: pd.DataFrame):
 
 
 # %%
+def label_questions(questions):
+    """
+    Get questions keys and values from survey question dictionary
+    Label non-unique questions with an increment
+    """
+    questions_inc = [
+        v if k.startswith("answers.") else k for (k, v) in questions.items()
+    ]  # get questions with values as strings
+    # label each non-unique question with increment
+    my_dict = {key: 0 for key in questions_inc}
+    for i in range(len(questions_inc)):
+        my_dict[questions_inc[i]] += 1  # increment occurrence
+        if my_dict[questions_inc[i]] > 1:  # check occurrence
+            questions_inc[i] = (
+                questions_inc[i] + "_v" + str(my_dict[questions_inc[i]])
+            )  # if duplicate append with increment
+    return questions_inc
+
+
+# %%
 def clean_survey_headers(dataframe: pd.DataFrame):
     """
     TODO write function to clean up first 2 rows of a task analytics survey so it can be used like a regular dataframe
