@@ -41,6 +41,7 @@ murmurhash==1.0.9
     #   thinc
 numpy==1.25.0
     # via
+    #   blis
     #   pandas
     #   spacy
     #   thinc
@@ -60,6 +61,7 @@ preshed==3.0.8
     #   thinc
 pydantic==1.10.9
     # via
+    #   confection
     #   spacy
     #   thinc
 pyjstat==2.4.0
@@ -88,6 +90,7 @@ spacy-loggers==1.0.4
     # via spacy
 srsly==2.4.6
     # via
+    #   confection
     #   spacy
     #   thinc
 taskanalytics-data-wrapper==0.1.7

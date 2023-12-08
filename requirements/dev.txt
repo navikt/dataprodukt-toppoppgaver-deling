@@ -153,7 +153,9 @@ requests==2.31.0
     #   spacy
     #   taskanalytics-data-wrapper
 six==1.16.0
-    # via python-dateutil
+    # via
+    #   asttokens
+    #   python-dateutil
 smart-open==6.3.0
     # via
     #   pathy
