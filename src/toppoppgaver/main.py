@@ -74,8 +74,16 @@ def find_substring_regex(regex: str, df, case=False):
 # %%
 def main():
     """
-    TO DO
-    put all input parameters and conditions here
+    Kjører hele programmet i flere steg
+    * Laster ned svarene fra spørreundersøkelsen
+    * Markerer spørsmålene og svarene som kategoriske eller fritekst
+    * Vasker datasettet for kjente navn i SSBs navnelister
+    * Vasker datasettet med Name entity recognition (NER) fra Spacy
+    * Bytter ut resterende tall som ligner år og beløp
+    * Vasker URLer for unike IDer
+    * Runder klokkeslett i svarene til nærmeste time
+    * Teller treff på navn blant svarene
+    * Lager formatert regneark til deling
     """
     download_survey(
         username=email,
