@@ -85,7 +85,7 @@ def main():
     * Teller treff på navn blant svarene
     * Lager formatert regneark til deling
     """
-    logging.info(f"Laster ned svar fra spørreundersøkelsen")
+    logging.info(f"Laster ned svar fra spørreundersøkelsen 💾")
     download_survey(
         username=email,
         password=password,
@@ -104,7 +104,7 @@ def main():
     fritekstsvar["inneholder"] = "Ja"
     kategorisvar["inneholder"] = "Nei"
     ny_df = fritekstsvar.copy()
-    logging.info("Vask datasettet")
+    logging.info("Vask datasettet 🧹")
     for i, v in enumerate(kun_fritekst, start=1):
         logging.info(f"Vasker nå spørsmål nr {i}: {v}")
         ny_df = ner.sladd_tekster(
