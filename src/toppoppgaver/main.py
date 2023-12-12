@@ -151,7 +151,7 @@ def main():
 
     make_workbook(
         data=df2,
-        path="../data/write_dict.xlsx",
+        path=Path("../data/write_dict.xlsx"),
         autofilter=True,
         last_row=len(siste),
         last_col=len(siste.columns),
@@ -164,3 +164,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# %%
