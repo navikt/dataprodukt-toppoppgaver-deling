@@ -48,9 +48,10 @@ def vask_urler(df, urler=list):
 
 
 # %%
-# aggreger til nærmeste time
 def runde_timer(df, tid=list):
-    """ """
+    """
+    Aggreger til nærmeste time
+    """
     for i in tid:
         df[i] = pd.to_datetime(df[i])
         df[i] = df[i].dt.round("H")
@@ -154,5 +155,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-# %%
