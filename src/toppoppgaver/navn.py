@@ -1,7 +1,10 @@
 # %%
 import json
+from pathlib import Path
 
 import requests
+
+from pyjstat import pyjstat
 
 
 # %%
@@ -31,13 +34,6 @@ def hent_fornavn():
     return d
 
 
-df = hent_fornavn()
-
-
-with open("data/final/fornavn.json", "w", encoding="utf-8") as f:
-    json.dump(df.json(), f, ensure_ascii=False)
-
-
 # %%
 def hent_etternavn():
     """
@@ -65,8 +61,14 @@ def hent_etternavn():
     return r
 
 
-df = hent_etternavn()
-
-with open("data/final/etternavn.json", "w", encoding="utf-8") as f:
-    json.dump(df.json(), f, ensure_ascii=False)
 # %%
+def pyjstat_to_df(filsti: Path):
+    """
+    Last inn json-stat data fra JSON-fil og konvertér til dataframe
+    """
+    with open(filsti, "r") as f:
+        j = json.load(f)
+        s = json.dumps(j)
+        dataset = pyjstat.Dataset.read(s)
+        df = dataset.write("dataframe")
+    return df

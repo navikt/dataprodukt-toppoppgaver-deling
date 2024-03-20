@@ -1,5 +1,6 @@
 # %%
 import os
+import json
 from pathlib import Path
 import logging
 
@@ -7,9 +8,10 @@ import pandas as pd
 from dotenv import load_dotenv
 from taskanalytics_data_wrapper.taskanalytics_api import download_survey
 
-import toppoppgaver.ner_vask_opplysninger as ner
-from toppoppgaver.pretty_sheets import make_workbook, transform_dataframe_to_dict
-from toppoppgaver.get_survey_data import (
+from navn import hent_fornavn, hent_etternavn, pyjstat_to_df
+import ner_vask_opplysninger as ner
+from pretty_sheets import make_workbook, transform_dataframe_to_dict
+from get_survey_data import (
     get_survey_questions,
     return_open_answers,
     label_questions,
@@ -20,6 +22,40 @@ load_dotenv()
 email = os.getenv("ta_email")
 password = os.getenv("ta_password")
 organization = os.getenv("ta_organization")
+
+
+# %%
+def hent_navn():
+    """
+    Hent lister med fornavn og etternavn fra SSB
+    """
+    df = hent_fornavn()
+    with open("../../data/final/fornavn.json", "w", encoding="utf-8") as f:
+        json.dump(df.json(), f, ensure_ascii=False)
+    df = hent_etternavn()
+    with open("../../data/final/etternavn.json", "w", encoding="utf-8") as f:
+        json.dump(df.json(), f, ensure_ascii=False)
+
+
+def forbered_navn():
+    """
+    Slår sammen fornavn og etternavn fra SSB og fjerner unntak
+    """
+    fornavn = pyjstat_to_df(Path("../../data/final/fornavn.json"))
+    fornavn_unik = [_ for _ in fornavn["fornavn"].unique()]
+    fornavn_små = [item.lower() for item in fornavn_unik]
+    etternavn = pyjstat_to_df(Path("../../data/final/etternavn.json"))
+    etternavn = etternavn[
+        ~etternavn["etternavn"].isin(["A-F", "G-K", "L-R", "S-Å"])
+    ]  # drop alfabetrekken
+    etternavn_unik = [_ for _ in etternavn["etternavn"].unique()]
+    etternavn_små = [item.lower() for item in etternavn_unik]
+    navn = fornavn_små + etternavn_små
+    # ignorer navn som forveksles med substantiv og verb
+    with open("../patterns/unntak.txt") as f:
+        unntak = [line.rstrip() for line in f]
+    navn = [n for n in navn if n not in unntak]
+    return navn
 
 
 # %%
@@ -85,17 +121,21 @@ def main():
     * Teller treff på navn blant svarene
     * Lager formatert regneark til deling
     """
+    logging.info(f"Laster ned navnelister fra SSB 📊")
+    hent_navn()
+    logging.info(f"Forbereder navnelister for vask")
+    navn = forbered_navn()
     logging.info(f"Laster ned svar fra spørreundersøkelsen 💾")
     download_survey(
         username=email,
         password=password,
-        survey_id="03373",
-        filename="../data/final/new_survey.csv",
+        survey_id="03381",
+        filename="../../data/final/new_survey.csv",
     )
-    df = pd.read_csv(Path("../data/final/new_survey.csv"))
+    df = pd.read_csv(Path("../../data/final/new_survey.csv"))
     questions = get_survey_questions(df)
     questions_labelled = label_questions(questions)
-    
+
     df = df.iloc[1:]
     kun_fritekst = return_open_answers(df)
     kategoriske = list(set(df.columns) - set(kun_fritekst))
@@ -112,6 +152,7 @@ def main():
             ents_list=["PER", "FNR", "TLF", "EPOST", "finne", "andre"],
             ekstra_vask_av_navn=True,
             text_col_input=v,
+            term_liste=navn,
         )
     logging.info(f"Datasettet er vasket og klart til å hentes 🧼 🪣")
     # fjern tall som kan representere år, tlfnr eller beløp
@@ -151,7 +192,7 @@ def main():
 
     make_workbook(
         data=df2,
-        path=Path("../data/write_dict.xlsx"),
+        path=Path("../../data/write_dict.xlsx"),
         autofilter=True,
         last_row=len(siste),
         last_col=len(siste.columns),
