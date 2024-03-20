@@ -8,7 +8,6 @@ import logging
 import spacy
 import numpy as np
 from flashtext import KeywordProcessor
-from pyjstat import pyjstat
 
 logging.basicConfig(level=logging.INFO)
 
@@ -41,39 +40,7 @@ ruler.add_patterns(custom_patterns)
 
 
 # %%
-def pyjstat_to_df(filsti: Path):
-    """
-    Last inn json-stat data fra JSON-fil og konvertér til dataframe
-    """
-    with open(filsti, "r") as f:
-        j = json.load(f)
-        s = json.dumps(j)
-        dataset = pyjstat.Dataset.read(s)
-        df = dataset.write("dataframe")
-    return df
-
-
-# %%
-fornavn = pyjstat_to_df(Path("../data/final/fornavn.json"))
-fornavn_unik = [_ for _ in fornavn["fornavn"].unique()]
-fornavn_små = [item.lower() for item in fornavn_unik]
-# %%
-etternavn = pyjstat_to_df(Path("../data/final/etternavn.json"))
-etternavn = etternavn[
-    ~etternavn["etternavn"].isin(["A-F", "G-K", "L-R", "S-Å"])
-]  # drop alfabetrekken
-etternavn_unik = [_ for _ in etternavn["etternavn"].unique()]
-etternavn_små = [item.lower() for item in etternavn_unik]
-navn = fornavn_små + etternavn_små
-# %%
-# ignorer navn som forveksles med substantiv og verb
-with open("../patterns/unntak.txt") as f:
-    unntak = [line.rstrip() for line in f]
-navn = [n for n in navn if n not in unntak]
-
-
-# %%
-def flashtext_sladd(df, text_col_input, text_col_output=None):
+def flashtext_sladd(df, text_col_input, term_liste: list, text_col_output=None):
     """Sladding av navn fra SSB-navnelister vha. flashtext
 
     parameters:
@@ -82,12 +49,13 @@ def flashtext_sladd(df, text_col_input, text_col_output=None):
         pandas dataframen som skal behandles
     text_col_input: str
         Navnet på kolonnen i dataframen med teksten som skal behandles
+    term_liste: list
+        Liste med begreper som skal vaskes.
     text_col_output: str
         Eventuelt navn på kolonne for vasket tekst.
         Dersom dette ikke angis legges output i text_col_input-kolonnen.
 
     """
-    term_liste = navn
     replacement = "PER"
 
     # definerer en tom keywordprocessor
@@ -213,6 +181,7 @@ def spacy_vask(
 def sladd_tekster(
     df,
     text_col_input,
+    term_liste: list,
     ents_list=["PER", "FNR", "TLF", "LOC", "ORG", "EPOST"],
     ekstra_vask_av_navn=True,
     n_process=1,
@@ -240,6 +209,8 @@ def sladd_tekster(
             "PER" - personnavn (spacy + SSB-liste)
             "LOC" - stedsnavn (spacy)
             "ORG" - organisasjoner/bedriftsnavn (spacy)
+    term_liste: list
+        Liste med begreper som skal vaskes. Videresendes til flashtext_sladd.
     ekstra_vask_av_navn: bool
         True om funksjonen skal kjøre SSB-navnevask i tillegg til NER
     n_process: int
@@ -294,7 +265,7 @@ def sladd_tekster(
     if ekstra_vask_av_navn == True:
         if print_progress == True:
             logging.info("Starter ekstra vask av personnavn mot SSB-lister...")
-        df = flashtext_sladd(df, out_col)
+        df = flashtext_sladd(df=df, text_col_input=out_col, term_liste=term_liste)
 
     stop = timeit.default_timer()
     if print_progress == True:
@@ -304,7 +275,7 @@ def sladd_tekster(
 
 
 # %%
-def flashtext_extract(df, text_col_input, col_output=None):
+def flashtext_extract(df, text_col_input, term_liste: list, col_output=None):
     """Uttrekk av treff på navn fra SSB-navnelister vha. flashtext
 
     parameters:
@@ -313,12 +284,13 @@ def flashtext_extract(df, text_col_input, col_output=None):
         pandas dataframen som skal behandles
     text_col_input: str
         Navnet på kolonnen i dataframen med teksten som skal behandles
+    term_liste: list
+        Liste med begreper som skal vaskes.
     col_output: str
         Eventuelt navn på kolonne for vasket tekst.
         Dersom dette ikke angis legges output i text_col_input-kolonnen.
 
     """
-    term_liste = navn
 
     # definerer en tom keywordprocessor
     processor = KeywordProcessor(case_sensitive=False)
@@ -328,7 +300,7 @@ def flashtext_extract(df, text_col_input, col_output=None):
     processor.non_word_boundaries.add("ø")
     processor.non_word_boundaries.add("å")
 
-    processor.add_keywords_from_list(navn)
+    processor.add_keywords_from_list(term_liste)
 
     # gjør en replace av alle søketermene med den grupperte versjonen av termen
     if col_output:
