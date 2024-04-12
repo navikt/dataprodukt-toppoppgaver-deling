@@ -52,7 +52,7 @@ executing==2.0.1
     # via stack-data
 flashtext==2.7
     # via dataprodukt-toppoppgaver-deling (pyproject.toml)
-idna==3.6
+idna==3.7
     # via requests
 ipykernel==6.29.3
     # via dataprodukt-toppoppgaver-deling (pyproject.toml)
