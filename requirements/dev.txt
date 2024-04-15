@@ -10,7 +10,7 @@ appnope==0.1.4
     # via ipykernel
 asttokens==2.4.1
     # via stack-data
-black==24.3.0
+black==24.4.0
     # via dataprodukt-toppoppgaver-deling (pyproject.toml)
 blis==0.7.11
     # via thinc
@@ -52,11 +52,11 @@ executing==2.0.1
     # via stack-data
 flashtext==2.7
     # via dataprodukt-toppoppgaver-deling (pyproject.toml)
-idna==3.6
+idna==3.7
     # via requests
-ipykernel==6.29.3
+ipykernel==6.29.4
     # via dataprodukt-toppoppgaver-deling (pyproject.toml)
-ipython==8.22.2
+ipython==8.23.0
     # via ipykernel
 jedi==0.19.1
     # via ipython
@@ -100,11 +100,11 @@ packaging==24.0
     #   spacy
     #   thinc
     #   weasel
-pandas==2.2.1
+pandas==2.2.2
     # via
     #   dataprodukt-toppoppgaver-deling (pyproject.toml)
     #   pyjstat
-parso==0.8.3
+parso==0.8.4
     # via jedi
 pathspec==0.12.1
     # via black
@@ -126,13 +126,13 @@ ptyprocess==0.7.0
     # via pexpect
 pure-eval==0.2.2
     # via stack-data
-pydantic==2.6.4
+pydantic==2.7.0
     # via
     #   confection
     #   spacy
     #   thinc
     #   weasel
-pydantic-core==2.16.3
+pydantic-core==2.18.1
     # via pydantic
 pygments==2.17.2
     # via ipython
@@ -146,7 +146,7 @@ python-dotenv==1.0.1
     # via dataprodukt-toppoppgaver-deling (pyproject.toml)
 pytz==2024.1
     # via pandas
-pyzmq==25.1.2
+pyzmq==26.0.0
     # via
     #   ipykernel
     #   jupyter-client
@@ -201,14 +201,15 @@ traitlets==5.14.2
     #   jupyter-client
     #   jupyter-core
     #   matplotlib-inline
-typer==0.9.0
+typer==0.9.4
     # via
     #   spacy
     #   weasel
-typing-extensions==4.10.0
+typing-extensions==4.11.0
     # via
     #   black
     #   cloudpathlib
+    #   ipython
     #   pydantic
     #   pydantic-core
     #   typer
