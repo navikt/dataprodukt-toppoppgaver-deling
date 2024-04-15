@@ -176,9 +176,7 @@ def main():
     logging.info(
         f"Andelen svar som inneholder treff på NER er {len(treff) / len(siste) * 100:.3f}%"
     )
-    logging.info(
-        f"Det tilsvarer {(len(treff))} treff blant {(len(siste))} svar totalt"
-    )
+    logging.info(f"Det tilsvarer {(len(treff))} treff blant {(len(siste))} svar totalt")
     logging.info(
         f"Andelen treff blant alle fritekstsvar er {len(treff)/len(fritekstsvar) * 100:.3f}%"
     )
