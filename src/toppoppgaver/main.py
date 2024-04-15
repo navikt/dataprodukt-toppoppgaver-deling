@@ -59,7 +59,7 @@ def forbered_navn():
 
 
 # %%
-def kun_fritekstsvar(df, kolonner):
+def kun_fritekstsvar(df: pd.DataFrame, kolonner):
     """
     Lag en dataframe med kun rader som inneholder fritekstsvar
     """
@@ -69,7 +69,7 @@ def kun_fritekstsvar(df, kolonner):
 
 
 # %%
-def vask_urler(df, urler=list):
+def vask_urler(df: pd.DataFrame, urler=list):
     """
     vask urler i en dataframe. send inn en dataframe og en liste med variabelnavn som inneholder URLer.
     """
@@ -84,7 +84,7 @@ def vask_urler(df, urler=list):
 
 
 # %%
-def runde_timer(df, tid=list):
+def runde_timer(df: pd.DataFrame, tid=list):
     """
     Aggreger til nærmeste time
     """
@@ -95,7 +95,7 @@ def runde_timer(df, tid=list):
 
 
 # %%
-def find_substring_regex(regex: str, df, case=False):
+def find_substring_regex(regex: str, df: pd.DataFrame, case=False):
     """
     Finn rader i en dataframe der innholdet matcher regulæruttrykket
     """
