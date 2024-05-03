@@ -107,7 +107,7 @@ taskanalytics-data-wrapper==0.1.7
     # via dataprodukt-toppoppgaver-deling (pyproject.toml)
 thinc==8.2.3
     # via spacy
-tqdm==4.66.2
+tqdm==4.66.3
     # via
     #   spacy
     #   taskanalytics-data-wrapper
