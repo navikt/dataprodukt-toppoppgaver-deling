@@ -18,4 +18,4 @@ init:
 update: update-deps init
 
 format:
-	black --exclude ^/venv .
+	black --exclude ^/.venv .
