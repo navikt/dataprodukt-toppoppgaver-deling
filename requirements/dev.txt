@@ -154,7 +154,7 @@ pyzmq==26.0.3
     # via
     #   ipykernel
     #   jupyter-client
-requests==2.31.0
+requests==2.32.0
     # via
     #   dataprodukt-toppoppgaver-deling (pyproject.toml)
     #   pyjstat
